@@ -1,1 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="icon" href="/assets/img/doge.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Home | Doge</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e1e;
+      color: white;
+    }
+
+    .tab-container {
+      display: flex;
+      align-items: center;
+      background: #333;
+      padding: 10px;
+      border-bottom: 2px solid #444;
+    }
+
+    .tab {
+      background: #444;
+      padding: 8px 15px;
+      margin-right: 5px;
+      border-radius: 5px 5px 0 0;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tab.active {
+      background: #666;
+    }
+
+    .close-btn {
+      margin-left: 10px;
+      cursor: pointer;
+      color: red;
+      font-size: 14px;
+    }
+
+    .new-tab-btn {
+      background: #555;
+      color: white;
+      padding: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      margin-left: auto;
+    }
+
+    .iframe-container {
+      width: 100%;
+      height: 90vh;
+      background: white;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tab-container">
+    <button class="new-tab-btn" onclick="newTab()">+ New Tab</button>
+  </div>
+
+  <div class="iframe-container">
+    <iframe id="activeIframe" src="https://www.google.com"></iframe>
+  </div>
+
+  <script>
+    let tabCount = 0;
+    let tabs = [];
+    let activeTabId = null;
+
+    function newTab() {
+      tabCount++;
+      const tabId = `tab-${tabCount}`;
+      const iframeId = `iframe-${tabCount}`;
+
+      // Create new tab button
+      const tab = document.createElement("div");
+      tab.className = "tab";
+      tab.id = tabId;
+      tab.innerHTML = `New Tab <span class="close-btn" onclick="closeTab('${tabId}', '${iframeId}')">&times;</span>`;
+      tab.onclick = function() { switchTab(iframeId, tabId); };
+
+      document.querySelector(".tab-container").insertBefore(tab, document.querySelector(".new-tab-btn"));
+
+      // Create new iframe
+      const iframe = document.createElement("iframe");
+      iframe.id = iframeId;
+      iframe.src = "https://www.google.com";
+      iframe.style.display = "none";
+      document.querySelector(".iframe-container").appendChild(iframe);
+
+      // Switch to new tab
+      switchTab(iframeId, tabId);
+    }
+
+    function switchTab(iframeId, tabId) {
+      document.querySelectorAll("iframe").forEach(frame => frame.style.display = "none");
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+
+      document.getElementById(iframeId).style.display = "block";
+      document.getElementById(tabId).classList.add("active");
+
+      activeTabId = tabId;
+    }
+
+    function closeTab(tabId, iframeId) {
+      document.getElementById(tabId).remove();
+      document.getElementById(iframeId).remove();
+
+      // If closing the active tab, switch to the first remaining tab
+      if (activeTabId === tabId) {
+        const remainingTabs = document.querySelectorAll(".tab");
+        if (remainingTabs.length > 0) {
+          remainingTabs[0].click();
+        }
+      }
+    }
+
+    // Open the first tab on page load
+    newTab();
+  </script>
+
+</body>
+</html>
 
